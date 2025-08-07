@@ -1,85 +1,61 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import {ref, onMounted } from 'vue';
+import axios from 'axios';
+import Card_Pokemon from './components/Card_Pokemon.vue';
+
+const pokemonList = ref([])
+
+const fetchPokemon = async () =>{
+  const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20')
+  pokemonList.value = await response.data
+}
+
+onMounted(() => {
+  fetchPokemon()
+})
+
+const getPokemonImage = (url:string) =>{
+  const id = url.split('/')[6];
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+}
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div>
+    <header class="py-10">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold font-['Bitcount']">POKEMON PROJECT</h1>
+      </div>
+    </header>
+     <form class="max-w-xl mx-auto">
+      <div class="relative">
+         <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-black rounded-full bg-white" placeholder=" Search..." required />
+         <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 font-medium rounded-full text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">Search</button>
+      </div>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+       </form>
+    <main>
 
-  <RouterView />
+       <div class="grid grid-cols-4 gap-10 px-10 py-10">
+        <Card_Pokemon v-for="pokemon in pokemonList.results" :key = "pokemon.name" :coverimage="getPokemonImage(pokemon.url)" :name="pokemon.name" url:="pokemon.url" />
+
+       </div>
+    </main>
+  </div>
+
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+
+h1 {
+  font-family: 'Bitcount', system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: 'slnt' 0, 'CRSV' 0.5, 'ELSH' 0, 'ELXP' 0;
+  font-size: 3rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
 </style>

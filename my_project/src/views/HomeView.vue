@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted , computed} from 'vue'
+import { ref, onMounted , computed, watch } from 'vue'
 import {fetchPokemonList}  from '@/api/Pokemon_Api'
 import Card_Pokemon from '@/components/Card_Pokemon.vue'
 import Pagination from '@/components/Pagination.vue'
 
 const pokemonList = ref({results: []})
+const originalList = ref({results: []}) //keep original list information
 const currentPage = ref(1)
 const itemsPerPage = 20
 const totalItems = ref(0)
@@ -14,6 +15,7 @@ const loadPokemon = async (page: number) => {
   const offset = (page - 1) * itemsPerPage
   const response = await fetchPokemonList(offset, itemsPerPage)
   pokemonList.value = response
+  originalList.value = {...response }
   totalItems.value = response.count
 }
 
@@ -30,23 +32,37 @@ const getPokemonImage = (url: string) => {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 }
 
+
+let searchTimeout: number
+watch(searchText, (newValue) => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    handleSearch()
+  }, 300) // Debounce for 300ms
+})
+
 const handleSearch = (event: KeyboardEvent) => {
- console.log(event.key)
+  if (searchText.value === '') {
+    pokemonList.value.results = originalList.value.results
+    totalItems.value = originalList.value.results.length
+  }else{
+    const filteredResults = pokemonList.value.results.filter(pokemon =>
+      pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
+    )
+    pokemonList.value.results = filteredResults
+  totalItems.value = filteredResults.length
+  }
 
+   // Update the pokemonList with filtered results
 
-  const filteredResults = pokemonList.value.results.filter(pokemon =>
-    pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
-  )
-
-  pokemonList.value.results = filteredResults
-
+  currentPage.value = 1
 }
 </script>
 
 <template>
 
   <div>
-     <form class="max-w-xl mx-auto">
+     <form class="max-w-xl mx-auto" @submit.prevent="handleSearch">
       <div class="relative">
          <input type="search"
          id="default-search"
@@ -69,6 +85,7 @@ const handleSearch = (event: KeyboardEvent) => {
   </div>
 
   <Pagination
+  v-if="pokemonList.results.length > 0"
     :currentPage="currentPage"
     :itemsPerPage="itemsPerPage"
     :totalItems="totalItems"

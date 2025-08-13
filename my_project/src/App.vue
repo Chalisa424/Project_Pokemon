@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, h } from 'vue';
+import {ref, onMounted,} from 'vue';
 import { RouterView } from 'vue-router';
 
 // const pokemonList = ref([])

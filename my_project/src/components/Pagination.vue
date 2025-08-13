@@ -37,13 +37,17 @@ const ChangePage = (page: number) => {
 <div class="flex justify-center gap-2 mt-4">
 
   <button
-    @click ="ChangePage(currentPage - 1)" :disabled="currentPage === 1">
-  >Previous</button>
+    @click ="ChangePage(currentPage - 1)" :disabled="currentPage === 1"
+    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-gray-300">
+
+  Previous</button>
 
 
   <button
     @click="ChangePage(currentPage + 1)"
-    :disabled="currentPage === totalPages">
+    :disabled="currentPage === totalPages || totalPages === 0"
+    class="px-4 py-2 bg-blue-500 text-white rounded "
+    >
    Next
   </button>
 

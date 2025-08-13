@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import {ref, onMounted } from 'vue';
+import {ref, onMounted, h } from 'vue';
 import { RouterView } from 'vue-router';
-
-
-
-
 
 // const pokemonList = ref([])
 
@@ -32,16 +28,8 @@ import { RouterView } from 'vue-router';
         <h1 class="text-4xl font-bold font-['Bitcount']">POKEMON PROJECT</h1>
       </div>
     </header>
-     <form class="max-w-xl mx-auto">
-      <div class="relative">
-         <input type="search"
-         id="default-search"
-         v-model="searchQuery"
-          class="block w-full p-4 ps-10 text-sm text-gray-900 border border-black rounded-full bg-white" placeholder=" Search..." required />
-         <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 font-medium rounded-full text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">Search</button>
-      </div>
 
-       </form>
+
     <main>
 
        <!-- <div class="grid grid-cols-4 gap-10 px-10 py-10">

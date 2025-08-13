@@ -25,7 +25,7 @@ const totalPages = computed(() => {
 })
 
 const ChangePage = (page: number) => {
-  if (page < 1 && page <= totalPages.value) {
+  if (page >= 1 && page <= totalPages.value) {
     emit('PageChanged', page)
   }
 }
@@ -34,11 +34,11 @@ const ChangePage = (page: number) => {
 <template>
 
 
-<div class="flex justify-center gap-2 mt-4">
+<div class="flex justify-center gap-5 mt-4">
 
   <button
     @click ="ChangePage(currentPage - 1)" :disabled="currentPage === 1"
-    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-gray-300">
+    class="text-white  bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
 
   Previous</button>
 
@@ -46,7 +46,7 @@ const ChangePage = (page: number) => {
   <button
     @click="ChangePage(currentPage + 1)"
     :disabled="currentPage === totalPages || totalPages === 0"
-    class="px-4 py-2 bg-blue-500 text-white rounded "
+    class="text-white  bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700"
     >
    Next
   </button>

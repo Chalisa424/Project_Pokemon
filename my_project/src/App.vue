@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import {ref, onMounted } from 'vue';
-import axios from 'axios';
-import Card_Pokemon from './components/Card_Pokemon.vue';
+import { RouterView } from 'vue-router';
 
-const pokemonList = ref([])
 
-const fetchPokemon = async () =>{
-  const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20')
-  pokemonList.value = await response.data
-}
 
-onMounted(() => {
-  fetchPokemon()
-})
 
-const getPokemonImage = (url:string) =>{
-  const id = url.split('/')[6];
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
-}
+
+// const pokemonList = ref([])
+
+// const fetchPokemon = async () =>{
+//   const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20')
+//   pokemonList.value = await response.data
+// }
+
+// onMounted(() => {
+//   fetchPokemon()
+// })
+
+// const getPokemonImage = (url:string) =>{
+//   const id = url.split('/')[6];
+//   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+// }
 
 </script>
 
@@ -31,17 +34,21 @@ const getPokemonImage = (url:string) =>{
     </header>
      <form class="max-w-xl mx-auto">
       <div class="relative">
-         <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-black rounded-full bg-white" placeholder=" Search..." required />
+         <input type="search"
+         id="default-search"
+         v-model="searchQuery"
+          class="block w-full p-4 ps-10 text-sm text-gray-900 border border-black rounded-full bg-white" placeholder=" Search..." required />
          <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 font-medium rounded-full text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">Search</button>
       </div>
 
        </form>
     <main>
 
-       <div class="grid grid-cols-4 gap-10 px-10 py-10">
+       <!-- <div class="grid grid-cols-4 gap-10 px-10 py-10">
         <Card_Pokemon v-for="pokemon in pokemonList.results" :key = "pokemon.name" :coverimage="getPokemonImage(pokemon.url)" :name="pokemon.name" url:="pokemon.url" />
 
-       </div>
+       </div> -->
+      <RouterView />
     </main>
   </div>
 

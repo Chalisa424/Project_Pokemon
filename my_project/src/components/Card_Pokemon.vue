@@ -1,10 +1,24 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 defineProps<{
   coverimage:string
   name:string
   url:string
 }>();
+
+const extractIdFromUrl =(url: string): string => {
+  return url.split('/').filter(Boolean).pop() || '';
+};
+
+const navigateToPokemon = (url:string) => {
+    const id = extractIdFromUrl(url);
+  router.push({ name: 'PokemonDetail', params: { id }
+})
+};
+
 
 </script>
 

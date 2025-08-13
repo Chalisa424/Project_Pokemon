@@ -12,7 +12,3 @@ export const useCounterStore = defineStore('counter', () => {
   return { count, doubleCount, increment }
 })
 
-export const fetchPokemon = async () =>{
-  const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=200')
-  return await response.json
-}

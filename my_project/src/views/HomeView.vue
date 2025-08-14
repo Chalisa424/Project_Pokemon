@@ -22,24 +22,23 @@ const loadPokemon = async () => {
     loadPaginationData(1)
   } catch (error) {
     console.error('Error loading Pokémon:', error)
-  }finally {
+  } finally {
     isloading.value = false
   }
 }
 
-const loadPaginationData = (page: number) =>{
+const loadPaginationData = (page: number) => {
   const offset = (page - 1) * itemsPerPage
   pokemonList.value.results = originalList.value.slice(offset, offset + itemsPerPage)
   currentPage.value = page
 }
 
 const handleSearch = () => {
-  if (!originalList.value) return
 
-  if (searchText.value === ''){
+  if (searchText.value === '') {
     loadPaginationData(1)
     totalItems.value = originalList.value.length
-  }else{
+  } else {
     const filteredResults = originalList.value.filter((pokemon) =>
       pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
     )
@@ -57,6 +56,12 @@ watch(searchText, (newValue) => {
   }, 300) // Debounce for 300ms
 })
 
+const handlePageChange = (newPage: number) => {
+  if (searchText.value) {
+    return
+  }
+  loadPaginationData(newPage)
+}
 
 onMounted(() => {
   loadPokemon()
@@ -98,25 +103,24 @@ const getPokemonImage = (url: string) => {
 
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold text-center my-6">Pokémon List</h1>
-    <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 my-4">
-      <Card_Pokemon
-        v-for="pokemon in pokemonList.results"
-        :key="pokemon.name"
-        :coverimage="getPokemonImage(pokemon.url)"
-        :name="pokemon.name"
-        :url="pokemon.url"
-        class="max-w-xs"
-      />
-    </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 my-4">
+        <Card_Pokemon
+          v-for="pokemon in pokemonList.results"
+          :key="pokemon.name"
+          :coverimage="getPokemonImage(pokemon.url)"
+          :name="pokemon.name"
+          :url="pokemon.url"
+          class="max-w-xs"
+        />
+      </div>
     </div>
 
     <Pagination
-      v-if="pokemonList.results.length > 0"
+      v-if="pokemonList.results.length > 0 && !searchText"
       :currentPage="currentPage"
       :itemsPerPage="itemsPerPage"
       :totalItems="totalItems"
-      @PageChanged="loadPokemon"
+      @PageChanged="handlePageChange"
     />
-
   </div>
 </template>

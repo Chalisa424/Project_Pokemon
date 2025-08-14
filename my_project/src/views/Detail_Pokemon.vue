@@ -22,8 +22,6 @@ const error = ref<string | null>(null)
 
 const fetchPokemonDetail = async (id: string) => {
   try {
-    loading.value = true
-    error.value = null
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
     pokemon.value = response.data
   } catch (err) {
@@ -45,10 +43,8 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="pokemon-detail">
-      <div v-if="loading" class="loading">Loading....</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="pokemon" class="detail-container">
+    <div class="pokemon-detail max-auto py-8">
+      <div v-if="pokemon" class="detail-container max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-8">
         <h1 class="text-3xl font-bold mb-6 text-center capitalize">{{ pokemon.name }}</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -56,16 +52,16 @@ onMounted(() => {
             <img
               :src="pokemon.sprites.front_default"
               :alt="pokemon.name"
-              class="mx-auto w-64 h-64 object-contain"
+              class="mx-auto w-80 h-80 object-contain flex items-center justify-center "
             />
           </div>
-          <div class="info-container">
-            <h2 class="text-2xl font-semibold mb-4">Abilities</h2>
-            <ul class="abilities-list">
+          <div class="info-container flex flex-col justify-center">
+            <h2 class="text-3xl font-bold mb-4">Abilities</h2>
+            <ul class="abilities-list list-none">
               <li
                 v-for="(ability, index) in pokemon.abilities"
                 :key="index"
-                class="capitalize py-2 px-4 bg-gray-100 rounded-lg mb-2"
+                class="capitalize py-2 px-4 text-2xl bg-gray-100 rounded-lg mb-2"
               >
                 {{ ability.ability.name }}
               </li>
@@ -74,7 +70,7 @@ onMounted(() => {
         </div>
         <router-link
           to="/"
-          class="mt-6 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          class="mt-6 inline-block px-4 py-2 bg-blue-600 text-2xl font-bold text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Back to Home
         </router-link>
@@ -83,36 +79,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
 
-
-.pokemon-detail {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 30px;
-  text-transform: capitalize;
-  color: #333;
-}
-
-.loading,
-.error {
-  @apply text-center text-xl py-10;
-}
-
-.detail-container {
-  @apply max-w-4xl mx-auto bg-white rounded-xl shadow-md p-8;
-}
-
-.image-container {
-  @apply flex items-center justify-center;
-}
-
-.info-container {
-  @apply flex flex-col justify-center;
-}
-
-.abilities-list {
-  @apply list-none;
-}
-</style>

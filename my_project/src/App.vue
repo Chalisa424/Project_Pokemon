@@ -2,22 +2,6 @@
 import {ref, onMounted,} from 'vue';
 import { RouterView } from 'vue-router';
 
-// const pokemonList = ref([])
-
-// const fetchPokemon = async () =>{
-//   const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20')
-//   pokemonList.value = await response.data
-// }
-
-// onMounted(() => {
-//   fetchPokemon()
-// })
-
-// const getPokemonImage = (url:string) =>{
-//   const id = url.split('/')[6];
-//   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
-// }
-
 </script>
 
 <template>
@@ -29,21 +13,18 @@ import { RouterView } from 'vue-router';
       </div>
     </header>
 
-
     <main>
-
-       <!-- <div class="grid grid-cols-4 gap-10 px-10 py-10">
-        <Card_Pokemon v-for="pokemon in pokemonList.results" :key = "pokemon.name" :coverimage="getPokemonImage(pokemon.url)" :name="pokemon.name" url:="pokemon.url" />
-
-       </div> -->
       <RouterView />
     </main>
+
   </div>
 
 </template>
 
 <style scoped>
-
+/* div{
+  background-color: #faedd2;
+} */
 h1 {
   font-family: 'Bitcount', system-ui;
   font-optical-sizing: auto;

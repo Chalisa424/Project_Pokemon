@@ -44,6 +44,7 @@ watch(searchText, (newValue) => {
   }, 300) // Debounce for 300ms
 })
 
+
 const handleSearch = (event: KeyboardEvent) => {
   if (searchText.value === '') {
     pokemonList.value.results = originalList.value.results
@@ -84,14 +85,18 @@ const handleSearch = (event: KeyboardEvent) => {
       </div>
     </form>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 px-10 my-4">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold text-center my-6">Pokémon List</h1>
+    <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 my-4">
       <Card_Pokemon
         v-for="pokemon in pokemonList.results"
         :key="pokemon.name"
         :coverimage="getPokemonImage(pokemon.url)"
         :name="pokemon.name"
+        :url="pokemon.url"
+        class="max-w-xs"
       />
-      <!-- :url="pokemon.url" -->
+    </div>
     </div>
 
     <Pagination
@@ -101,5 +106,6 @@ const handleSearch = (event: KeyboardEvent) => {
       :totalItems="totalItems"
       @PageChanged="loadPokemon"
     />
+
   </div>
 </template>

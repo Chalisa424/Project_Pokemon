@@ -10,25 +10,28 @@ defineProps<{
 }>();
 
 const extractIdFromUrl =(url: string): string => {
-  return url.split('/').filter(Boolean).pop() || '';
+  const parts = url.split('/').filter(part =>part !=='');
+  return parts[parts.length - 1];
 };
 
 const navigateToPokemon = (url:string) => {
     const id = extractIdFromUrl(url);
-  router.push({ name: 'PokemonDetail', params: { id }
-})
-};
-
+    if(id) {
+      router.push({
+        name: '/pokemon-detail',
+        params: { id }
+      })
+  }
+}
 
 </script>
 
 <template>
-<div>
+<div @click="navigateToPokemon(url)" class="cursor-pointer">
   <div class="card ">
     <img :src="coverimage" :alt="name" style="width: 100%" />
     <div class="container">
       <h3 class="text-center">{{ name }}</h3>
-      <p>{{ url }}</p>
     </div>
   </div>
   </div>

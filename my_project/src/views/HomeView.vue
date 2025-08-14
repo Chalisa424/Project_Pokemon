@@ -5,36 +5,48 @@ import Card_Pokemon from '@/components/Card_Pokemon.vue'
 import Pagination from '@/components/Pagination.vue'
 import axios from 'axios'
 
-const pokemonList = ref({ results: [] })
-const originalList = ref({ results: [] }) //keep original list information
+const pokemonList = ref<{ results: Array<{ name: string; url: string }> }>({ results: [] })
+const originalList = ref<any[]>([])
 const currentPage = ref(1)
 const itemsPerPage = 20
 const totalItems = ref(0)
 const searchText = ref('')
+const isloading = ref(false)
 
-const loadPokemon = async (page: number) => {
+const loadPokemon = async () => {
   try {
-    const offset = (page - 1) * itemsPerPage
-    const response = await fetchPokemonList(offset, itemsPerPage)
-    pokemonList.value = response
-    originalList.value = { ...response }
-    totalItems.value = response.count
-    currentPage.value = page
+    isloading.value = true
+    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=1000`)
+    originalList.value = response.data.results || []
+    totalItems.value = response.data.count || 0
+    loadPaginationData(1)
   } catch (error) {
     console.error('Error loading Pokémon:', error)
+  }finally {
+    isloading.value = false
   }
 }
-onMounted(() => {
-  loadPokemon(currentPage.value)
-})
 
-const totalPages = computed(() => {
-  return Math.ceil(totalItems.value / itemsPerPage)
-})
+const loadPaginationData = (page: number) =>{
+  const offset = (page - 1) * itemsPerPage
+  pokemonList.value.results = originalList.value.slice(offset, offset + itemsPerPage)
+  currentPage.value = page
+}
 
-const getPokemonImage = (url: string) => {
-  const id = url.split('/')[6]
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+const handleSearch = () => {
+  if (!originalList.value) return
+
+  if (searchText.value === ''){
+    loadPaginationData(1)
+    totalItems.value = originalList.value.length
+  }else{
+    const filteredResults = originalList.value.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
+    )
+    pokemonList.value.results = filteredResults
+    totalItems.value = filteredResults.length
+    currentPage.value = 1
+  }
 }
 
 let searchTimeout: number
@@ -46,21 +58,18 @@ watch(searchText, (newValue) => {
 })
 
 
-const handleSearch = (event: KeyboardEvent) => {
-  if (searchText.value === '') {
-    pokemonList.value.results = originalList.value.results
-    totalItems.value = originalList.value.results.length
-  } else {
-    const filteredResults = pokemonList.value.results.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
-    )
-    pokemonList.value.results = filteredResults
-    totalItems.value = filteredResults.length
-  }
+onMounted(() => {
+  loadPokemon()
+})
 
-  currentPage.value = 1
+const totalPages = computed(() => {
+  return Math.ceil(totalItems.value / itemsPerPage)
+})
+
+const getPokemonImage = (url: string) => {
+  const id = url.split('/')[6]
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 }
-
 
 
 </script>

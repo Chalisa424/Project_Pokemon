@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { fetchPokemonList } from '@/api/Pokemon_Api'
 import Card_Pokemon from '@/components/Card_Pokemon.vue'
 import Pagination from '@/components/Pagination.vue'
+import axios from 'axios'
 
 const pokemonList = ref({ results: [] })
 const originalList = ref({ results: [] }) //keep original list information
@@ -57,10 +58,11 @@ const handleSearch = (event: KeyboardEvent) => {
     totalItems.value = filteredResults.length
   }
 
-  // Update the pokemonList with filtered results
-
   currentPage.value = 1
 }
+
+
+
 </script>
 
 <template>

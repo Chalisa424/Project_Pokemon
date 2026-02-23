@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { fetchPokemonList } from '@/api/Pokemon_Api'
+import { ref, onMounted, watch } from 'vue'
 import Card_Pokemon from '@/components/Card_Pokemon.vue'
 import Pagination from '@/components/Pagination.vue'
 import axios from 'axios'
 
 const pokemonList = ref<{ results: Array<{ name: string; url: string }> }>({ results: [] })
-const originalList = ref<any[]>([])
+const originalList = ref<Array<{ name: string; url: string }>>([])
 const currentPage = ref(1)
 const itemsPerPage = 20
 const totalItems = ref(0)
@@ -16,10 +15,17 @@ const isloading = ref(false)
 const loadPokemon = async () => {
   try {
     isloading.value = true
+    const startTime = Date.now()
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=1000`)
     originalList.value = response.data.results || []
     totalItems.value = response.data.count || 0
     loadPaginationData(1)
+
+    const elapsed = Date.now() - startTime
+    const minimumDelay = 800
+    if (elapsed < minimumDelay) {
+      await new Promise((resolve) => setTimeout(resolve, minimumDelay - elapsed))
+    }
   } catch (error) {
     console.error('Error loading Pokémon:', error)
   } finally {
@@ -34,13 +40,12 @@ const loadPaginationData = (page: number) => {
 }
 
 const handleSearch = () => {
-
   if (searchText.value === '') {
     loadPaginationData(1)
     totalItems.value = originalList.value.length
   } else {
     const filteredResults = originalList.value.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(searchText.value.toLowerCase())
+      pokemon.name.toLowerCase().includes(searchText.value.toLowerCase()),
     )
     pokemonList.value.results = filteredResults
     totalItems.value = filteredResults.length
@@ -49,7 +54,7 @@ const handleSearch = () => {
 }
 
 let searchTimeout: number
-watch(searchText, (newValue) => {
+watch(searchText, () => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     handleSearch()
@@ -67,16 +72,10 @@ onMounted(() => {
   loadPokemon()
 })
 
-const totalPages = computed(() => {
-  return Math.ceil(totalItems.value / itemsPerPage)
-})
-
 const getPokemonImage = (url: string) => {
   const id = url.split('/')[6]
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 }
-
-
 </script>
 
 <template>
@@ -103,7 +102,20 @@ const getPokemonImage = (url: string) => {
 
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold text-center my-6">Pokémon List</h1>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 my-4">
+
+      <p v-if="isloading" class="text-center text-blue-600 text-2xl font-bold my-10">Loading...</p>
+
+      <p
+        v-else-if="searchText && pokemonList.results.length === 0"
+        class="text-center text-red-600 text-2xl font-bold my-10"
+      >
+        ไม่พบ Pokémon ที่ค้นหา
+      </p>
+
+      <div
+        v-else
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 px-10 my-4"
+      >
         <Card_Pokemon
           v-for="pokemon in pokemonList.results"
           :key="pokemon.name"
@@ -116,7 +128,7 @@ const getPokemonImage = (url: string) => {
     </div>
 
     <Pagination
-      v-if="pokemonList.results.length > 0 && !searchText"
+      v-if="!isloading && pokemonList.results.length > 0 && !searchText"
       :currentPage="currentPage"
       :itemsPerPage="itemsPerPage"
       :totalItems="totalItems"

@@ -44,7 +44,11 @@ onMounted(() => {
 <template>
   <div>
     <div class="pokemon-detail max-auto py-8">
-      <div v-if="pokemon" class="detail-container max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-8">
+      <p v-if="loading" class="text-center text-blue-600 text-2xl font-bold">Loading...</p>
+      <div
+        v-if="pokemon"
+        class="detail-container max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-8"
+      >
         <h1 class="text-3xl font-bold mb-6 text-center capitalize">{{ pokemon.name }}</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -52,7 +56,7 @@ onMounted(() => {
             <img
               :src="pokemon.sprites.front_default"
               :alt="pokemon.name"
-              class="mx-auto w-80 h-80 object-contain flex items-center justify-center "
+              class="mx-auto w-80 h-80 object-contain flex items-center justify-center"
             />
           </div>
           <div class="info-container flex flex-col justify-center">
@@ -78,5 +82,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-
